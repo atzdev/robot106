@@ -35,7 +35,7 @@ class RobotController extends Controller
 
 					switch ($event['message']['type']) {
 						case 'text':
-							$respMessage = 'Hello, your message is '. $event['message']['text'];
+							$respMessage = 'Hello, your message is ====> '. $event['message']['text'];
 							$httpClient = new CurlHTTPClient($channel_token);
 							$bot = new LINEBot($httpClient, array('channelSecret' => $channel_secret));
 							$TextMessageBuilder = new TextMessageBuilder($respMessage);
