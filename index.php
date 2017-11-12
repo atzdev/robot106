@@ -1,58 +1,87 @@
 <?php
 
-/**
- * Laravel - A PHP Framework For Web Artisans
- *
- * @package  Laravel
- * @author   Taylor Otwell <taylor@laravel.com>
- */
+//echo "Hello everyone. Are you there?";
+//echo "bla bla ...";
+require_once('./vendor/autoload.php');
+
+use \LINE\LINEBot\HTTPClient\CurlHTTPClient;
+
+use \LINE\LINEBot;
+
+use \LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 
 /*
-|--------------------------------------------------------------------------
-| Register The Auto Loader
-|--------------------------------------------------------------------------
-|
-| Composer provides a convenient, automatically generated class loader for
-| our application. We just need to utilize it! We'll simply require it
-| into the script here so that we don't have to worry about manual
-| loading any of our classes later on. It feels nice to relax.
-|
+
+CHANNEL_ID=1545811741
+CHANNEL_SECRET=e4231788b61ba4311b188f1f8fc7d374
+MID=tFjmP/fFD+ykyqTmymYgweAZBdHw2lQQFO2d3TY3rOn6Mxw15Z6AmV1xBz3KfL1EL1Lr/PYJXNyxGFG0Mtw78pz0/dqu7hoyA7OGk9NfYrD3GggXb3OgGezjLIknJQEZjf6xAGCY4/Z60lW0+inyzAdB04t89/1O/w1cDnyilFU=
 */
 
-require __DIR__.'/laravel/bootstrap/autoload.php';
 
-/*
-|--------------------------------------------------------------------------
-| Turn On The Lights
-|--------------------------------------------------------------------------
-|
-| We need to illuminate PHP development, so let us turn on the lights.
-| This bootstraps the framework and gets it ready for use, then it
-| will load up this application so that we can run it and send
-| the responses back to the browser and delight our users.
-|
-*/
+$channel_token = 'tFjmP/fFD+ykyqTmymYgweAZBdHw2lQQFO2d3TY3rOn6Mxw15Z6AmV1xBz3KfL1EL1Lr/PYJXNyxGFG0Mtw78pz0/dqu7hoyA7OGk9NfYrD3GggXb3OgGezjLIknJQEZjf6xAGCY4/Z60lW0+inyzAdB04t89/1O/w1cDnyilFU=';
 
-$app = require_once __DIR__.'/laravel/bootstrap/app.php';
+$channel_secret = 'e4231788b61ba4311b188f1f8fc7d374';
 
-/*
-|--------------------------------------------------------------------------
-| Run The Application
-|--------------------------------------------------------------------------
-|
-| Once we have the application, we can handle the incoming request
-| through the kernel, and send the associated response back to
-| the client's browser allowing them to enjoy the creative
-| and wonderful application we have prepared for them.
-|
-*/
+// Get message from Line API
+$content = file_get_contents('php://input');
+$events = json_decode($content, true);
 
-$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+if(!is_null($events['events'])) {
+	// Loop through each event
+	foreach($events['events'] as $event) {
 
-$response = $kernel->handle(
-    $request = Illuminate\Http\Request::capture()
-);
 
-$response->send();
 
-$kernel->terminate($request, $response);
+		// Line API send a lot of event type, we interested in message only
+		if($event['type'] == 'message') {
+			// Get replyToken
+			$replyToken = $event['replyToken'];
+
+			switch ($event['message']['type']) {
+				case 'text':
+					$respMessage = 'Hello, your message is '. $event['message']['text'];
+					$httpClient = new CurlHTTPClient($channel_token);
+					$bot = new LINEBot($httpClient, array('channelSecret' => $channel_secret));
+					$TextMessageBuilder = new TextMessageBuilder($respMessage);
+					$response = $bot->replyMessage($replyToken, $TextMessageBuilder);
+
+					break;
+				
+				
+				
+			}
+
+			
+		}
+	}
+}
+
+echo 'ok';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
