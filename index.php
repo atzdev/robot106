@@ -8,7 +8,9 @@ use \LINE\LINEBot\HTTPClient\CurlHTTPClient;
 
 use \LINE\LINEBot;
 
+use \LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use \LINE\LINEBot\MessageBuilder\TextMessageBuilder;
+use \LINE\LINEBot\MessageBuilder\StickerMessageBuilder;
 
 /*
 
@@ -42,8 +44,17 @@ if(!is_null($events['events'])) {
 					$respMessage = 'Hello, your message is '. $event['message']['text'];
 					$httpClient = new CurlHTTPClient($channel_token);
 					$bot = new LINEBot($httpClient, array('channelSecret' => $channel_secret));
-					$TextMessageBuilder = new TextMessageBuilder($respMessage);
-					$response = $bot->replyMessage($replyToken, $TextMessageBuilder);
+					//Sticker
+					$packageId = 1;
+					$stickerId = 410;
+
+
+					$myMultiMessage = new MultiMessageBuilder();
+					$myMultiMessage->add(new StickerMessageBuilder($packageId, $stickerId))
+									->add(new TextMessageBuilder($respMessage))
+									->add(new TextMessageBuilder('Thank you.'));
+
+					$response = $bot->replyMessage($replyToken, $myMultiMessage);
 
 					break;
 				
